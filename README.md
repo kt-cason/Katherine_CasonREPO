@@ -125,26 +125,52 @@ Public Datasets: Bring up your Google BigQuery console, open the menu for the pu
 Paste your SQL query and answer the question in a sentence.  Be sure you properly format your queries and results using markdown. 
 
 - What's the size of this dataset? (i.e., how many trips)
-
+  The size of the data set is: 983,648 distinct trips.
+  SQL:
+SELECT DISTINCT(COUNT(trip_id))
+FROM `bigquery-public-data.san_francisco.bikeshare_trips`
 - What is the earliest start date and time and latest end date and time for a trip?
+  The earliest start data and time is: August 9, 2013 at 9:08 AM coordinated universal time. & The latest end date and time is: August 31, 2016 at 11:48 PM coordinated universal time.
+  SQL:
+SELECT start_date
+FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+ORDER BY start_date
+
+SELECT end_date
+FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+ORDER BY end_date DESC
 
 - How many bikes are there?
+  There are 700 bikes.
+  SQL:
+SELECT COUNT(DISTINCT bike_number)
+FROM `bigquery-public-data.san_francisco.bikeshare_trips`
 
 
 ### Questions of your own
 - Make up 3 questions and answer them using the Bay Area Bike Share Trips Data.  These questions MUST be different than any of the questions and queries you ran above.
 
-- Question 1: 
-  * Answer:
-  * SQL query:
+- Question 1: What is the name of the bike station where the most trips are started?
+  * Answer: San Francisco Caltrain (Townsend at 4th)
+  * SQL query: 
+SELECT start_station_name
+FROM `bigquery-public-data.san_francisco.bikeshare_trips` 
+GROUP BY start_station_name
+ORDER BY COUNT(trip_id) DESC
 
-- Question 2:
-  * Answer:
+- Question 2: How many bikes were used throughout the day on my Christmas in 2013?
+  * Answer: 187 bikes
   * SQL query:
+SELECT COUNT(DISTINCT(bike_number))
+FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+WHERE start_date BETWEEN '2013-12-25 00:00:00 UTC' AND '2013-12-26 00:00:00 UTC'
 
-- Question 3:
-  * Answer:
+- Question 3: Which bike was used the longest and for how many seconds?
+  * Answer: bike 535 for 17270400 second
   * SQL query:
+SELECT bike_number, duration_sec
+FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+ORDER BY duration_sec DESC
 
 ### Bonus activity queries (optional - not graded - just this section is optional, all other sections are required)
 
@@ -188,11 +214,27 @@ from `bigquery-public-data.san_francisco_bikeshare.bikeshare_station_info`
    queries and results here, using properly formatted markdown):
 
   * What's the size of this dataset? (i.e., how many trips)
-
+    
+    bq query --use_legacy_sql=false \
+    'SELECT DISTINCT(COUNT(trip_id))
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`'
+    
   * What is the earliest start time and latest end time for a trip?
-
+    ```sql
+    SELECT start_date
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    ORDER BY start_date
+    ```
+    ```sql
+    SELECT end_date
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    ORDER BY end_date DESC
+    ```
   * How many bikes are there?
-
+    ```sql
+    SELECT COUNT(DISTINCT bike_number)
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    ```
 2. New Query (Run using bq and paste your SQL query and answer the question in a sentence, using properly formatted markdown):
 
   * How many trips are in the morning vs in the afternoon?

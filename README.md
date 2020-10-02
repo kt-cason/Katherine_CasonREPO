@@ -214,46 +214,73 @@ from `bigquery-public-data.san_francisco_bikeshare.bikeshare_station_info`
    queries and results here, using properly formatted markdown):
 
   * What's the size of this dataset? (i.e., how many trips)
-    
+    ```sql
     bq query --use_legacy_sql=false \
     'SELECT DISTINCT(COUNT(trip_id))
     FROM `bigquery-public-data.san_francisco.bikeshare_trips`'
-    
+    ```
   * What is the earliest start time and latest end time for a trip?
     ```sql
-    SELECT start_date
+    bq query --use_legacy_sql=false \
+    'SELECT start_date
     FROM `bigquery-public-data.san_francisco.bikeshare_trips`
-    ORDER BY start_date
+    ORDER BY start_date'
     ```
     ```sql
-    SELECT end_date
+    bq query --use_legacy_sql=false \
+    'SELECT end_date
     FROM `bigquery-public-data.san_francisco.bikeshare_trips`
-    ORDER BY end_date DESC
+    ORDER BY end_date DESC'
     ```
   * How many bikes are there?
     ```sql
-    SELECT COUNT(DISTINCT bike_number)
-    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    bq query --use_legacy_sql=false \
+    'SELECT COUNT(DISTINCT(bike_number))
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`'
     ```
 2. New Query (Run using bq and paste your SQL query and answer the question in a sentence, using properly formatted markdown):
 
   * How many trips are in the morning vs in the afternoon?
-
-
+    There are 399,821 in the morning (between 6 AM and 11:59 AM).
+    ```sql
+    bq query --use_legacy_sql=false \
+    'SELECT COUNT(trip_id) AS morning_trips
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    WHERE (EXTRACT(HOUR FROM start_date)) >= 6 AND (EXTRACT(HOUR FROM start_date)) < 12'
+    ```
+    
+    There are 391,199 in the afternoon (between 12 PM and 5:59PM).
+    ```sql
+    bq query --use_legacy_sql=false \
+    'SELECT COUNT(trip_id) AS afternoon_trips
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    WHERE (EXTRACT(HOUR FROM start_date)) >= 12 AND (EXTRACT(HOUR FROM start_date)) < 18'
+    ```
+    
 ### Project Questions
 Identify the main questions you'll need to answer to make recommendations (list
 below, add as many questions as you need).
 
-- Question 1: 
+- Question 1: How many trips are taken on each of the 6 most popular holidays (Christmas, Thanksgiving, Halloween, Valentine's Day, St. Patrick's Day, and Easter)? - offer deals on these days
 
-- Question 2: 
+- Question 2: What hour of the day are the most amount of bikes available?
 
-- Question 3: 
+- Question 3: Where do the least amount of trips start?
 
-- Question 4: 
+- Question 4: What days do the annual membership holders use bikes most?
 
-- ...
+- Question 5: What hours do the annual membership holders use bikes most?
 
+- Question 6: Which station has the most amount of bikes available at the slowest hour of the day? (use q2)
+
+- Question 7:
+
+- Question 8:
+
+- Question 9:
+
+- Question 10:
+...
 - Question n: 
 
 ### Answers
@@ -262,23 +289,153 @@ Answer at least 4 of the questions you identified above You can use either
 BigQuery or the bq command line tool.  Paste your questions, queries and
 answers below.
 
-- Question 1: 
+- Question 1: How many trips are taken on each of the 6 most popular holidays (Christmas, Thanksgiving, Halloween, Valentine's Day, St. Patrick's Day, and Easter)? - least trips taken on Christmas and Thanksgiving
+  * Answer: Christmas: 287, Halloween: 488, Valentine's Day: 483, St. Patrick's Day: 528, Santacon: 506, Thanksgiving (November 28, 2013/November 27, 2014/November 26, 2015):  168, 106, 81 = 355, Easter (April 20, 2014/ April 5, 2015/ March 27, 2016): 211, 143, 147= 501
+  * SQL query:
+  CHRISTMAS
+  ```sql
+  SELECT COUNT(DISTINCT(bike_number))
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    WHERE (EXTRACT(MONTH FROM start_date))= 12 AND (EXTRACT(DAY FROM start_date)) = 25
+    ```
+  HALLOWEEN
+  ```sql
+  SELECT COUNT(DISTINCT(bike_number))
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    WHERE (EXTRACT(MONTH FROM start_date))= 10 AND (EXTRACT(DAY FROM start_date)) = 31
+    ```
+  VALENTINE'S DAY
+  ```sql
+  SELECT COUNT(DISTINCT(bike_number))
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    WHERE (EXTRACT(MONTH FROM start_date))= 2 AND (EXTRACT(DAY FROM start_date)) = 14
+   ```
+  THANKSGIVING- November 28, 2013/November 27, 2014/November 26, 2015
+  ```sql
+  SELECT COUNT(DISTINCT(bike_number))
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    WHERE (EXTRACT(MONTH FROM start_date))= 11 AND (EXTRACT(DAY FROM start_date)) = 28 AND (EXTRACT(YEAR FROM start_date)) = 2013
+    ```
+    ```sql
+    SELECT COUNT(DISTINCT(bike_number))
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    WHERE (EXTRACT(MONTH FROM start_date))= 11 AND (EXTRACT(DAY FROM start_date)) = 27 AND (EXTRACT(YEAR FROM start_date)) = 2014
+    ```
+    ```sql
+    SELECT COUNT(DISTINCT(bike_number))
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    WHERE (EXTRACT(MONTH FROM start_date))= 11 AND (EXTRACT(DAY FROM start_date)) = 26 AND (EXTRACT(YEAR FROM start_date)) = 2015
+    ```
+  ST. PATRICK'S DAY
+  ```sql
+  SELECT COUNT(DISTINCT(bike_number))
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    WHERE (EXTRACT(MONTH FROM start_date))= 3 AND (EXTRACT(DAY FROM start_date)) = 17
+  ```
+  
+  EASTER- April 20,2014/ April 5, 2015/ March 27, 2016
+  ```sql
+  SELECT COUNT(DISTINCT(bike_number))
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    WHERE (EXTRACT(MONTH FROM start_date))= 4 AND (EXTRACT(DAY FROM start_date)) = 20 AND (EXTRACT(YEAR FROM start_date)) = 2014
+    ```
+    ```sql
+    SELECT COUNT(DISTINCT(bike_number))
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    WHERE (EXTRACT(MONTH FROM start_date))= 4 AND (EXTRACT(DAY FROM start_date)) = 5 AND (EXTRACT(YEAR FROM start_date)) = 2015
+    ```
+    ```sql
+    SELECT COUNT(DISTINCT(bike_number))
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    WHERE (EXTRACT(MONTH FROM start_date))= 3 AND (EXTRACT(DAY FROM start_date)) = 27 AND (EXTRACT(YEAR FROM start_date)) = 2016
+    ```
+  SANTACON- DEC 10, 2016 *** WRONG LOOK AT AGAIN- santacon was on dec 10 in 2016 but not the rest of the years
+  ```sql
+  SELECT COUNT(DISTINCT(bike_number))
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    WHERE (EXTRACT(MONTH FROM start_date))= 12 AND (EXTRACT(DAY FROM start_date)) = 10
+  ```
+  
+- Question 2: What are the start and end station names with the most amount of trips?
+  * Answer: start station names: San Francisco Caltrain (Townsend at 4th) , San Francisco Caltrain 2 (330 Townsend), Harry Bridges Plaza (Ferry Building), Embarcadero at Sansome, 2nd at Townsend. end station names: San Francisco Caltrain (Townsend at 4th) , San Francisco Caltrain 2 (330 Townsend), Harry Bridges Plaza (Ferry Building), Embarcadero at Sansome, 2nd at Townsend
+  * SQL query:
+  START STATIONS
+  ```sql
+  SELECT start_station_name, COUNT(trip_id) AS trip_counts
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    GROUP BY start_station_name
+    ORDER BY trip_counts DESC
+  ```
+  END STATIONS
+  ```sql
+  SELECT end_station_name, COUNT(trip_id) AS trip_counts
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    GROUP BY end_station_name
+    ORDER BY trip_counts DESC
+  ```
+  
+- Question 3: Where do the least amount of trips start (worst 4) & how many trips have started there?
+  * Answer: 5th St at E. San Salvador St- 1 trip, Sequoia Hospital- 15 trips, 5th S at E. San Salvador St- 19 trips, San Jose Government Center- 23 trips
+  * SQL query:
+  ```sql
+  SELECT start_station_name, COUNT(trip_id) AS trip_counts
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    GROUP BY start_station_name
+    ORDER BY trip_counts ASC
+  ```
+- Question 4: Where do the least amount of trips end (worst 4) & how many trips have ended there?
+  * Answer: 5th St at E. San Salvador St- 1 trip, Sequoia Hospital- 14 trips, San Jose Government Center- 23 trips, 5th S at E. San Salvador St- 24 trips
+  * SQL query:
+  ```sql
+  SELECT end_station_name, COUNT(trip_id) AS trip_counts
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    GROUP BY end_station_name
+    ORDER BY trip_counts ASC
+  ```
+- Question 5: For morning commutes, what are the 5 most popular start stations, and how many trips start there?
+  * Answer: Morning commutes are between 6 AM and 9:59 AM because people are on their way to work. Most commuters that use the bikeshare option are membership holders (subscribers) because it is a better choice financially than paying for rides daily as a regular customer would. The 5 most popular start stations are: San Francisco Caltrain 2 (330 Townsend), Harry Bridges Plaza (Ferry Building), San Francisco Caltrain (Townsend at 4th), Embarcadero at Sansome, 2nd at Townsend with 56100 trips, 49062 trips, 41553 trips, 41137 trips, and 39936 trips relatively. 
+  * SQL query:
+  ```sql 
+  SELECT start_station_name, COUNT(start_station_name) AS start_station_counts
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    WHERE (EXTRACT(HOUR FROM start_date))>= 6 AND (EXTRACT(HOUR FROM start_date))<10 
+      AND subscriber_type = 'Subscriber' 
+      AND start_station_name = 'San Francisco Caltrain (Townsend at 4th)' 
+      OR start_station_name = 'San Francisco Caltrain 2 (330 Townsend)'
+      OR start_station_name = 'Harry Bridges Plaza (Ferry Building)'
+      OR start_station_name = 'Embarcadero at Sansome'
+      OR start_station_name = '2nd at Townsend'
+    GROUP BY start_station_name
+    ORDER BY start_station_counts DESC
+  ```
+- Question 6: For morning commutes, what are the 5 most popular end stations, and how many trips start there?
+  * Answer:
+  * SQL query:
+  ```sql
+  SELECT end_station_name, COUNT(end_station_name) AS end_station_counts
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    WHERE (EXTRACT(HOUR FROM start_date))>= 6 AND (EXTRACT(HOUR FROM start_date))<11 
+      AND subscriber_type = 'Subscriber' 
+      AND end_station_name = 'San Francisco Caltrain (Townsend at 4th)' 
+      OR end_station_name = 'San Francisco Caltrain 2 (330 Townsend)'
+      OR end_station_name = 'Harry Bridges Plaza (Ferry Building)'
+      OR end_station_name = 'Embarcadero at Sansome'
+      OR end_station_name = '2nd at Townsend'
+    GROUP BY end_station_name
+    ORDER BY end_station_counts DESC
+  ```
+  
+- Question 7:
   * Answer:
   * SQL query:
 
-- Question 2:
+- Question 8:
   * Answer:
   * SQL query:
 
-- Question 3:
+- Question 9:
   * Answer:
   * SQL query:
-  
-- Question 4:
-  * Answer:
-  * SQL query:
-  
-- ...
 
 - Question n:
   * Answer:

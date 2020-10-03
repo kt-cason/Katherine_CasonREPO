@@ -289,6 +289,31 @@ Answer at least 4 of the questions you identified above You can use either
 BigQuery or the bq command line tool.  Paste your questions, queries and
 answers below.
 
+- Question 0: What are the 5 most popular trips that you would call "commuter trips"?
+  * Answer: The most popular morning commuter trips (between 6 AM and 9:59 AM) are: Harry Bridges Plaza (Ferry Building) to 2nd at Townsend- 4842 trips, Steuart at Market to 2nd at Townsend- 3837 trips, San Francisco Caltrain (Townsend at 4th) to Temporary Transbay Terminal (Howard at Beale)- 3817 trips, San Francisco Caltrain (Townsend at 4th) to Embarcadero at Folsom- 3622 trips, and San Francisco Caltrain 2 (330 Townsend) to Townsend at 7th- 3620 trips. The most popular evening commuter trips (between 4 PM and 7:59 PM) are: 2nd at Townsend to Harry Bridges Plaza (Ferry Building)- 4456 trips, Embarcadero at Sansome to Steuart at Market- 4282 trips, Embarcadero at Folsom to San Francisco Caltrain (Townsend at 4th)- 4180 trips, 2nd at South Park to Market at Sansome- 3573 trips, Steuart at Market to San Francisco Caltrain (Townsend at 4th)- 3567 trips.
+  * SQL query: 
+  MOST POPULAR MORNING COMMUTER TRIPS
+  ```sql
+  SELECT start_station_name, end_station_name, count(*) AS number_morning_commutes
+  FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+  WHERE start_station_name <> end_station_name 
+    AND (EXTRACT(HOUR FROM start_date) < 10
+    AND EXTRACT(HOUR FROM start_date) >= 6)
+  GROUP BY start_station_name, end_station_name
+  ORDER BY number_morning_commutes DESC
+  LIMIT 5
+  ```
+  MOST POPULAR EVENING COMMUTER TRIPS
+  ```sql
+  SELECT start_station_name, end_station_name, count(*) AS number_evening_commutes
+  FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+  WHERE start_station_name <> end_station_name 
+    AND (EXTRACT(HOUR FROM start_date) < 20
+    AND EXTRACT(HOUR FROM start_date) >= 16)
+  GROUP BY start_station_name, end_station_name
+  ORDER BY number_evening_commutes DESC
+  LIMIT 5
+  ```
 - Question 1: How many trips are taken on each of the 6 most popular holidays (Christmas, Thanksgiving, Halloween, Valentine's Day, St. Patrick's Day, and Easter)? - least trips taken on Christmas and Thanksgiving
   * Answer: Christmas: 287, Halloween: 488, Valentine's Day: 483, St. Patrick's Day: 528, Santacon: 506, Thanksgiving (November 28, 2013/November 27, 2014/November 26, 2015):  168, 106, 81 = 355, Easter (April 20, 2014/ April 5, 2015/ March 27, 2016): 211, 143, 147= 501
   * SQL query:
@@ -382,6 +407,7 @@ answers below.
     FROM `bigquery-public-data.san_francisco.bikeshare_trips`
     GROUP BY start_station_name
     ORDER BY trip_counts ASC
+    LIMIT 4
   ```
 - Question 4: Where do the least amount of trips end (worst 4) & how many trips have ended there?
   * Answer: 5th St at E. San Salvador St- 1 trip, Sequoia Hospital- 14 trips, San Jose Government Center- 23 trips, 5th S at E. San Salvador St- 24 trips
@@ -391,57 +417,81 @@ answers below.
     FROM `bigquery-public-data.san_francisco.bikeshare_trips`
     GROUP BY end_station_name
     ORDER BY trip_counts ASC
+    LIMIT 4
   ```
-- Question 5: For morning commutes, what are the 5 most popular start stations, and how many trips start there?
-  * Answer: Morning commutes are between 6 AM and 9:59 AM because people are on their way to work. Most commuters that use the bikeshare option are membership holders (subscribers) because it is a better choice financially than paying for rides daily as a regular customer would. The 5 most popular start stations are: San Francisco Caltrain 2 (330 Townsend), Harry Bridges Plaza (Ferry Building), San Francisco Caltrain (Townsend at 4th), Embarcadero at Sansome, 2nd at Townsend with 56100 trips, 49062 trips, 41553 trips, 41137 trips, and 39936 trips relatively. 
-  * SQL query:
-  ```sql 
-  SELECT start_station_name, COUNT(start_station_name) AS start_station_counts
-    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
-    WHERE (EXTRACT(HOUR FROM start_date))>= 6 AND (EXTRACT(HOUR FROM start_date))<10 
-      AND subscriber_type = 'Subscriber' 
-      AND start_station_name = 'San Francisco Caltrain (Townsend at 4th)' 
-      OR start_station_name = 'San Francisco Caltrain 2 (330 Townsend)'
-      OR start_station_name = 'Harry Bridges Plaza (Ferry Building)'
-      OR start_station_name = 'Embarcadero at Sansome'
-      OR start_station_name = '2nd at Townsend'
-    GROUP BY start_station_name
-    ORDER BY start_station_counts DESC
-  ```
-- Question 6: For morning commutes, what are the 5 most popular end stations, and how many trips start there?
-  * Answer:
+- Question 5: What are the 5 most popular evening commuter trips for subscribers?
+  * Answer: The 5 most popular evening (between 4PM and 7:59 PM) trips are:
+      2nd at Townsend to Harry Bridges Plaza (Ferry Building)- 4268 trips
+      Embarcadero at Folsom to San Francisco Caltrain (Townsend at 4th)- 4088 trips
+      Embarcadero at Sansome to Steuart at Market- 4009 trips
+      2nd at South Park to Market at Sansome- 3510 trips
+      Steuart at Market to San Francisco Caltrain (Townsend at 4th)- 3469 trips
   * SQL query:
   ```sql
-  SELECT end_station_name, COUNT(end_station_name) AS end_station_counts
-    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
-    WHERE (EXTRACT(HOUR FROM start_date))>= 6 AND (EXTRACT(HOUR FROM start_date))<11 
-      AND subscriber_type = 'Subscriber' 
-      AND end_station_name = 'San Francisco Caltrain (Townsend at 4th)' 
-      OR end_station_name = 'San Francisco Caltrain 2 (330 Townsend)'
-      OR end_station_name = 'Harry Bridges Plaza (Ferry Building)'
-      OR end_station_name = 'Embarcadero at Sansome'
-      OR end_station_name = '2nd at Townsend'
-    GROUP BY end_station_name
-    ORDER BY end_station_counts DESC
+  SELECT start_station_name, end_station_name, count(*) AS number_evening_commutes
+  FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+  WHERE start_station_name <> end_station_name 
+    AND subscriber_type = 'Subscriber'
+    AND (EXTRACT(HOUR FROM start_date) < 20
+    AND EXTRACT(HOUR FROM start_date) >= 16)
+  GROUP BY start_station_name, end_station_name
+  ORDER BY number_evening_commutes DESC
+  LIMIT 5
+    ```
+- Question 6: What are the 5 most popular morning commuter trips for subscribers?
+  * Answer: The 5 most popular morning (between 6AM and 9:59 AM) trips are:
+      Harry Bridges Plaza (Ferry Building) to 2nd at Townsend- 4774 trips
+      Steuart at Market to 2nd at Townsend- 3786 trips
+      San Francisco Caltrain (Townsend at 4th) to Temporary Transbay Terminal (Howard at Beale)-3779 trips
+      San Francisco Caltrain (Townsend at 4th) to Embarcadero at Folsom- 3599 trips
+      San Francisco Caltrain 2 (330 Townsend) to Townsend at 7th- 3567 trips
+  * SQL query:
+  ```sql
+  SELECT start_station_name, end_station_name, count(*) AS number_evening_commutes
+  FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+  WHERE start_station_name <> end_station_name 
+    AND subscriber_type = 'Subscriber'
+    AND (EXTRACT(HOUR FROM start_date) < 10
+    AND EXTRACT(HOUR FROM start_date) >= 6)
+  GROUP BY start_station_name, end_station_name
+  ORDER BY number_evening_commutes DESC
+  LIMIT 5
   ```
-  
-- Question 7:
-  * Answer:
+- Question 7: Which 4 bike stations have the most available bikes on the weekends?
+  * Answer: Stations 61, 50, 69, and 2 have the most available bikes on the weekends.
+  * SQL query: 
+  ```sql
+  SELECT station_id, SUM(bikes_available) AS num_bikes
+  FROM `bigquery-public-data.san_francisco.bikeshare_status`
+  WHERE 
+        ((EXTRACT(DAYOFWEEK FROM time)) = 6 
+      OR (EXTRACT(DAYOFWEEK FROM time)) = 7
+      OR (EXTRACT(DAYOFWEEK FROM time)) = 1)
+  GROUP BY station_id
+  ORDER BY num_bikes DESC
+  LIMIT 4
+  ```
+- Question 8: Which 5 zipcodes have the least number of trips taken by subscribers?
+  * Answer: The zipcodes with the least number of trips taken by subscribers are 90405, 37405, 2138, 96150, 20005.
   * SQL query:
-
-- Question 8:
-  * Answer:
+  ```sql
+  SELECT zip_code, COUNT(*) as trips
+      FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+      WHERE subscriber_type = 'Subscriber'
+      GROUP BY zip_code
+      ORDER BY trips ASC
+      LIMIT 5
+  ```
+- Question 9: Which 5 zipcodes have the least number of trips taken by non-subscribing customers?
+  * Answer: The zipcodes with the least number of trips taken by non-subscribing customers are 95056, 59650, 8901, 9539, and 96837.
   * SQL query:
-
-- Question 9:
-  * Answer:
-  * SQL query:
-
-- Question n:
-  * Answer:
-  * SQL query:
-
----
+  ```sql
+  SELECT zip_code, COUNT(*) as trips
+  FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+  WHERE subscriber_type = 'Customer'
+  ORDER BY trips ASC
+  LIMIT 5
+  ```
 
 ## Part 3 - Employ notebooks to synthesize query project results
 

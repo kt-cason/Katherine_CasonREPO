@@ -261,27 +261,25 @@ from `bigquery-public-data.san_francisco_bikeshare.bikeshare_station_info`
 Identify the main questions you'll need to answer to make recommendations (list
 below, add as many questions as you need).
 
+- Question 0: What are the 5 most popular trips that you would call "commuter trips"?
+
 - Question 1: How many trips are taken on each of the 6 most popular holidays (Christmas, Thanksgiving, Halloween, Valentine's Day, St. Patrick's Day, and Easter)? - offer deals on these days
 
-- Question 2: What hour of the day are the most amount of bikes available?
+- Question 2:  What are the start and end station names with the most amount of trips?
 
-- Question 3: Where do the least amount of trips start?
+- Question 3: Where do the least amount of trips start (worst 4) & how many trips have started there?
 
-- Question 4: What days do the annual membership holders use bikes most?
+- Question 4: Where do the least amount of trips end (worst 4) & how many trips have ended there?
 
-- Question 5: What hours do the annual membership holders use bikes most?
+- Question 5: What are the 5 most popular evening commuter trips for subscribers?
 
-- Question 6: Which station has the most amount of bikes available at the slowest hour of the day? (use q2)
+- Question 6: What are the 5 most popular morning commuter trips for subscribers?
 
-- Question 7:
+- Question 7: Which 4 bike stations have the most available bikes on the weekends?
 
-- Question 8:
+- Question 8: Which 5 zipcodes have the least number of trips taken by subscribers?
 
-- Question 9:
-
-- Question 10:
-...
-- Question n: 
+- Question 9: Which 5 zipcodes have the least number of trips taken by non-subscribing customers?
 
 ### Answers
 
@@ -314,8 +312,8 @@ answers below.
   ORDER BY number_evening_commutes DESC
   LIMIT 5
   ```
-- Question 1: How many trips are taken on each of the 6 most popular holidays (Christmas, Thanksgiving, Halloween, Valentine's Day, St. Patrick's Day, and Easter)? - least trips taken on Christmas and Thanksgiving
-  * Answer: Christmas: 256, Halloween: 1111, Valentine's Day: 1521, St. Patrick's Day: 2367, Thanksgiving (November 28, 2013/November 27, 2014/November 26, 2015):  239, Easter (April 20, 2014/ April 5, 2015): 592
+- Question 1: How many trips are taken on each of the 6 most popular holidays (Christmas, Thanksgiving, Halloween, Valentine's Day, St. Patrick's Day, and Easter)?
+  * Answer: Christmas: 256, Halloween: 1111, Valentine's Day: 1521, St. Patrick's Day: 2367, Thanksgiving (November 28, 2013/November 27, 2014/November 26, 2015):  239, Easter (April 20, 2014/ April 5, 2015): 592  - least trips taken on Christmas, Thanksgiving, and Easter
   * SQL query:
   CHRISTMAS
   ```sql

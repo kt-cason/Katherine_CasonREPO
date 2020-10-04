@@ -315,72 +315,50 @@ answers below.
   LIMIT 5
   ```
 - Question 1: How many trips are taken on each of the 6 most popular holidays (Christmas, Thanksgiving, Halloween, Valentine's Day, St. Patrick's Day, and Easter)? - least trips taken on Christmas and Thanksgiving
-  * Answer: Christmas: 287, Halloween: 488, Valentine's Day: 483, St. Patrick's Day: 528, Santacon: 506, Thanksgiving (November 28, 2013/November 27, 2014/November 26, 2015):  168, 106, 81 = 355, Easter (April 20, 2014/ April 5, 2015/ March 27, 2016): 211, 143, 147= 501
+  * Answer: Christmas: 256, Halloween: 1111, Valentine's Day: 1521, St. Patrick's Day: 2367, Thanksgiving (November 28, 2013/November 27, 2014/November 26, 2015):  239, Easter (April 20, 2014/ April 5, 2015): 592
   * SQL query:
   CHRISTMAS
   ```sql
-  SELECT COUNT(DISTINCT(bike_number))
+  SELECT COUNT(*)
     FROM `bigquery-public-data.san_francisco.bikeshare_trips`
     WHERE (EXTRACT(MONTH FROM start_date))= 12 AND (EXTRACT(DAY FROM start_date)) = 25
+    AND ((EXTRACT(YEAR FROM start_date)) = 2014 OR (EXTRACT(YEAR FROM start_date)) = 2015)
     ```
   HALLOWEEN
   ```sql
-  SELECT COUNT(DISTINCT(bike_number))
+  SELECT COUNT(*)
     FROM `bigquery-public-data.san_francisco.bikeshare_trips`
     WHERE (EXTRACT(MONTH FROM start_date))= 10 AND (EXTRACT(DAY FROM start_date)) = 31
+    AND ((EXTRACT(YEAR FROM start_date)) = 2014 OR (EXTRACT(YEAR FROM start_date)) = 2015)
     ```
   VALENTINE'S DAY
   ```sql
-  SELECT COUNT(DISTINCT(bike_number))
+  SELECT COUNT(*)
     FROM `bigquery-public-data.san_francisco.bikeshare_trips`
     WHERE (EXTRACT(MONTH FROM start_date))= 2 AND (EXTRACT(DAY FROM start_date)) = 14
+    AND ((EXTRACT(YEAR FROM start_date)) = 2014 OR (EXTRACT(YEAR FROM start_date)) = 2015)
    ```
   THANKSGIVING- November 28, 2013/November 27, 2014/November 26, 2015
   ```sql
-  SELECT COUNT(DISTINCT(bike_number))
+SELECT COUNT(*)
     FROM `bigquery-public-data.san_francisco.bikeshare_trips`
-    WHERE (EXTRACT(MONTH FROM start_date))= 11 AND (EXTRACT(DAY FROM start_date)) = 28 AND (EXTRACT(YEAR FROM start_date)) = 2013
-    ```
-    ```sql
-    SELECT COUNT(DISTINCT(bike_number))
-    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
-    WHERE (EXTRACT(MONTH FROM start_date))= 11 AND (EXTRACT(DAY FROM start_date)) = 27 AND (EXTRACT(YEAR FROM start_date)) = 2014
-    ```
-    ```sql
-    SELECT COUNT(DISTINCT(bike_number))
-    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
-    WHERE (EXTRACT(MONTH FROM start_date))= 11 AND (EXTRACT(DAY FROM start_date)) = 26 AND (EXTRACT(YEAR FROM start_date)) = 2015
+    WHERE (((EXTRACT(MONTH FROM start_date))= 11 AND (EXTRACT(DAY FROM start_date)) = 26 AND (EXTRACT(YEAR FROM start_date)) = 2015)
+    OR ((EXTRACT(MONTH FROM start_date))= 11 AND (EXTRACT(DAY FROM start_date)) = 27 AND (EXTRACT(YEAR FROM start_date)) = 2014))
     ```
   ST. PATRICK'S DAY
   ```sql
-  SELECT COUNT(DISTINCT(bike_number))
+  SELECT COUNT(*)
     FROM `bigquery-public-data.san_francisco.bikeshare_trips`
     WHERE (EXTRACT(MONTH FROM start_date))= 3 AND (EXTRACT(DAY FROM start_date)) = 17
+    AND ((EXTRACT(YEAR FROM start_date)) = 2014 OR (EXTRACT(YEAR FROM start_date)) = 2015)
   ```
-  
-  EASTER- April 20,2014/ April 5, 2015/ March 27, 2016
+  EASTER- April 20,2014/ April 5, 2015
   ```sql
-  SELECT COUNT(DISTINCT(bike_number))
+ SELECT COUNT(*)
     FROM `bigquery-public-data.san_francisco.bikeshare_trips`
-    WHERE (EXTRACT(MONTH FROM start_date))= 4 AND (EXTRACT(DAY FROM start_date)) = 20 AND (EXTRACT(YEAR FROM start_date)) = 2014
-    ```
-    ```sql
-    SELECT COUNT(DISTINCT(bike_number))
-    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
-    WHERE (EXTRACT(MONTH FROM start_date))= 4 AND (EXTRACT(DAY FROM start_date)) = 5 AND (EXTRACT(YEAR FROM start_date)) = 2015
-    ```
-    ```sql
-    SELECT COUNT(DISTINCT(bike_number))
-    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
-    WHERE (EXTRACT(MONTH FROM start_date))= 3 AND (EXTRACT(DAY FROM start_date)) = 27 AND (EXTRACT(YEAR FROM start_date)) = 2016
-    ```
-  SANTACON- DEC 10, 2016 *** WRONG LOOK AT AGAIN- santacon was on dec 10 in 2016 but not the rest of the years
-  ```sql
-  SELECT COUNT(DISTINCT(bike_number))
-    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
-    WHERE (EXTRACT(MONTH FROM start_date))= 12 AND (EXTRACT(DAY FROM start_date)) = 10
-  ```
-  
+    WHERE ((EXTRACT(MONTH FROM start_date))= 4 AND (EXTRACT(DAY FROM start_date)) = 20 AND (EXTRACT(YEAR FROM start_date)) = 2014)
+    OR ((EXTRACT(MONTH FROM start_date))= 4 AND (EXTRACT(DAY FROM start_date)) = 5 AND (EXTRACT(YEAR FROM start_date)) = 2015)
+    ```  
 - Question 2: What are the start and end station names with the most amount of trips?
   * Answer: start station names: San Francisco Caltrain (Townsend at 4th) , San Francisco Caltrain 2 (330 Townsend), Harry Bridges Plaza (Ferry Building), Embarcadero at Sansome, 2nd at Townsend. end station names: San Francisco Caltrain (Townsend at 4th) , San Francisco Caltrain 2 (330 Townsend), Harry Bridges Plaza (Ferry Building), Embarcadero at Sansome, 2nd at Townsend
   * SQL query:
